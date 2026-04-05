@@ -1,12 +1,15 @@
 import { Map, Marker, useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
 import { useEffect, useRef } from "react";
 
+// Defines a geographic box ard sg, prevents panning map outside sg
 const SINGAPORE_BOUNDS = {
   north: 1.466878,
   south: 1.21186,
   west: 103.584676,
   east: 104.114079,
 };
+
+// Colour customisations for original Navex dark mode
 const MAP_STYLES = [
   { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
   { elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
@@ -88,6 +91,7 @@ const MAP_STYLES = [
   },
 ];
 
+// receives input from main-page.jsx
 export default function NavexMap({
   defaultLocation,
   markers,
@@ -95,10 +99,15 @@ export default function NavexMap({
   handleChangeMarker,
   handleDeleteMarker,
 }) {
-  let map = useMap();
-  let mapsLib = useMapsLibrary("maps");
-  let markerPathRef = useRef(null);
+  // gMaps specific
+  let map = useMap(); // get access to gMaps object
+  let mapsLib = useMapsLibrary("maps"); // load gMaps drawing library
+  let markerPathRef = useRef(null); // stores ref to dotted line between markers
 
+  // useEffect runs code whenever sth changes
+  // checks if map is ready, if not - stops
+  // clears prev dotted lines 
+  // draws new dotted lines connecting markers
   useEffect(() => {
     if (!mapsLib || !map) {
       return;
@@ -125,6 +134,7 @@ export default function NavexMap({
     markerPathRef.current.setMap(map);
   }, [markers]);
 
+  // Clicking anywhere on the map adds marker with clicked coords
   return (
     <Map
       styles={MAP_STYLES}
@@ -143,6 +153,7 @@ export default function NavexMap({
         <Marker
           key={marker.id}
           position={marker.position}
+          // Dragging pin calls Change Marker
           draggable={true}
           onDragEnd={e =>
             handleChangeMarker(marker.id, {
@@ -150,6 +161,7 @@ export default function NavexMap({
               lng: e.latLng.lng(),
             })
           }
+          // Clicking pin calls Delete Marker
           onClick={() => handleDeleteMarker(marker.id)}
         />
       ))}

@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 
 // Disabled temporarily
 // const MAPTILER_API_KEY = import.meta.env.VITE_MAPTILER_API_KEY;
-const SOURCE_CRS = 4326; // WGS 84
-const DESTINATION_CRS = 3168; // Kertau (RSO) / RSO Malaya
+const SOURCE_CRS = 4326; // WGS 84 - standard GPS coords
+const DESTINATION_CRS = 3168; // Kertau (RSO) / RSO Malaya - SAF coord system
 const FAILURE_MESSAGE = "Oops, something went wrong! Please make sure you have your API key set correctly.";
 
 export default function NDS({ markers, interval }) {
@@ -12,7 +12,7 @@ export default function NDS({ markers, interval }) {
   let [statusMessage, setStatusMessage] = useState("");
 
   useEffect(() => {
-    const apiKey = sessionStorage.getItem("userApiKey");
+    const apiKey = sessionStorage.getItem("userApiKey"); // gets Maptiler API Key
 
     if (!apiKey) {
       setStatusMessage(FAILURE_MESSAGE);
@@ -35,7 +35,7 @@ export default function NDS({ markers, interval }) {
       `&t_srs=${DESTINATION_CRS}` +
       `&key=${apiKey}`;
 
-    fetch(url)
+    fetch(url) //calling external API - either find free API or do the math in Python
       .then(response => response.json())
       .then(responsePayload => {
         setStatusMessage("");
@@ -43,7 +43,7 @@ export default function NDS({ markers, interval }) {
 
         const mgrs = responsePayload.results;
 
-        // Convert all MGRs to floating point numbers.
+        // Convert all MGRs to floating point numbers. - CORE ALGORITHM
         for (let i = 0; i < mgrs.length; i++) {
           let { x, y } = mgrs[i];
           mgrs[i] = {
@@ -58,11 +58,14 @@ export default function NDS({ markers, interval }) {
           let y = mgrs[i - 1].y;
           let xDiff = mgrs[i].x - x;
           let yDiff = mgrs[i].y - y;
+          // Straight line distance using Pythagoras' Theorem
           let distance = (xDiff ** 2 + yDiff ** 2) ** 0.5 / (interval / 10);
+          // bearing
           let azimuth = getAzimuth(xDiff, yDiff);
           let xIncrement = xDiff / distance;
           let yIncrement = yDiff / distance;
 
+          // Divides into smaller segments based on interval setting
           for (let j = 0; j < Math.floor(distance); j++) {
             let start = { x, y };
             x += xIncrement;
@@ -93,6 +96,7 @@ export default function NDS({ markers, interval }) {
       });
   }, [markers, interval]);
 
+  // Renders NDS table w 5 columns
   return (
     <>
       {statusMessage && <p className="text-center mt-5">{statusMessage}</p>}
@@ -101,6 +105,7 @@ export default function NDS({ markers, interval }) {
       >
         <thead className="bg-green">
           <tr>
+            // Said 5 columns
             <TableCell>No.</TableCell>
             <TableCell>Start MGR</TableCell>
             <TableCell>End MGR</TableCell>
@@ -111,6 +116,7 @@ export default function NDS({ markers, interval }) {
         <tbody>
           {ndsData.map(({ start, end, azimuth, interval, count }, index) => (
             <tr
+              // rows alt between dark and normal bg
               key={index}
               className={`${index % 2 == 0 && "bg-[#212121]"} ${count == 0 && "text-yellow-100"}`}
             >
@@ -137,10 +143,12 @@ function TableCell({ count, children }) {
   );
 }
 
+// returns MGR coord for display in the table
 function getFormattedMgr(mgr) {
   return Math.round(mgr.x).toString() + " " + Math.round(mgr.y).toString();
 }
 
+// converts x/y diff into mils (0-6400) instead of degrees
 function getAzimuth(xDiff, yDiff) {
   if (xDiff === 0) {
     // Vertical

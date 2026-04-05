@@ -1,5 +1,7 @@
+// Link changes page without reloading, Outlet inserts child pages (Eg. MainPage)
 import { Link, Outlet } from "react-router-dom";
-import ApiKeyManagement from "../components/api-key-management.jsx";
+import ApiKeyManagement from "../components/api-key-management.jsx"; // Handles Gmaps API
+// To update and change GMaps API into a free one in the future
 
 export default function Root() {
   return (
@@ -10,17 +12,18 @@ export default function Root() {
         </h1>
         <p className="mb-5 text-center">Generate your NDS with a few clicks!</p>
 
-        <ApiKeyManagement />
+        <ApiKeyManagement /> // Renders the API Key input
 
-        <Outlet />
+        <Outlet /> // where child page is inserted
       </div>
       <footer className="bg-black pb-10 pt-6 text-center">
-        <h2 className="m-4 text-xl font-bold">ORD Lo.</h2>
+        <h2 className="m-4 text-xl font-bold">ORD Lo.</h2> // text
         <p className="text-xs">
-          <a href="https://github.com/Airiinnn">Alex</a> |{" "}
+          <a href="https://github.com/Airiinnn">Alex</a> |{" "} //developer links
           <a href="https://github.com/wuihee">Wuihee</a> |{" "}
           <a href="mailto: projectnavex@gmail.com">Contact</a> | <Link></Link>
-          <Link to={"/donate"}>Support Us</Link>
+          <Link to={"/donate"}>Support Us</Link>                //donate page link
+          // To update footer in the future
         </p>
       </footer>
     </div>
