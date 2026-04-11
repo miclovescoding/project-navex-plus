@@ -1,5 +1,5 @@
 import "leaflet/dist/leaflet.css";
-import { MapContainer, TileLayer, useMap, Marker, useMapEvents } from "react-leaflet";
+import { MapContainer, TileLayer, useMap, Marker, useMapEvents, LayersControl } from "react-leaflet";
 import { useEffect } from "react";
 
 // Defines a geographic box ard sg, prevents panning map outside sg
@@ -47,10 +47,50 @@ export default function NavexMap({
   scrollWheelZoom={true}
   className="my-5 h-[450px] w-full md:h-[75vh]"
 >
+  <LayersControl position="topright">
+  <LayersControl.BaseLayer checked name="Topo">
+    <TileLayer
+      attribution='&copy; TracesTrack'
+      url={`https://tile.tracestrack.com/topo__/{z}/{x}/{y}.png?key=${import.meta.env.VITE_TRACESTRACK_API_KEY}`}
+    />
+  </LayersControl.BaseLayer>
+
+  <LayersControl.BaseLayer name="OpenStreetMap">
+    <TileLayer
+      attribution='&copy; OpenStreetMap contributors'
+      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+    />
+  </LayersControl.BaseLayer>
+
+  <LayersControl.BaseLayer name="CyclOSM">
+    <TileLayer
+      attribution='&copy; CyclOSM'
+      url="https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png"
+    />
+  </LayersControl.BaseLayer>
+
+  <LayersControl.BaseLayer name="Voyager">
+    <TileLayer
+      attribution='&copy; CartoDB'
+      url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+    />
+  </LayersControl.BaseLayer>
+
+  <LayersControl.BaseLayer name="Satellite">
+    <TileLayer
+      attribution='&copy; Esri'
+      url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+    />
+  </LayersControl.BaseLayer>
+
+  <LayersControl.Overlay name="Satnav Labels">
   <TileLayer
-    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+    url="https://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}"
+    attribution='&copy; Esri'
   />
+</LayersControl.Overlay>
+</LayersControl>
+
   <ChangeMapView location={defaultLocation} />
   {markers.map(marker => (
   <Marker
