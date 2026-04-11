@@ -15,9 +15,12 @@ def hello():
 # turns a python function into a URL endpoint
 @app.route("/convert")
 def convert():
+    # reads values from url string
     lat = float(request.args.get("lat"))
     lng = float(request.args.get("lng"))
+    # converts latlong to x,y coords
     x, y = transformer.transform(lat, lng)
+    # converts to JSON
     return {"x": x, "y": y}
 
 if __name__ == "__main__":

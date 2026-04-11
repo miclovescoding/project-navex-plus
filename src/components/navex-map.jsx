@@ -1,5 +1,5 @@
 import "leaflet/dist/leaflet.css";
-import { MapContainer, TileLayer, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, useMap, Marker, useMapEvents } from "react-leaflet";
 import { useEffect } from "react";
 
 // Defines a geographic box ard sg, prevents panning map outside sg
@@ -20,7 +20,16 @@ function ChangeMapView({ location }) {
 
   return null;
 }
-// receives input from main-page.jsx
+
+function MapClickHandler({ handleAddMarker }) {
+  useMapEvents({
+    click(e) {
+      handleAddMarker(e.latlng);
+    },
+  });
+  return null;
+}
+
 export default function NavexMap({
   defaultLocation,
   markers,
@@ -43,6 +52,22 @@ export default function NavexMap({
     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
   />
   <ChangeMapView location={defaultLocation} />
+  {markers.map(marker => (
+  <Marker
+    key={marker.id}
+    position={marker.position}
+    draggable={true}
+    eventHandlers={{
+      dragend(e) {
+        handleChangeMarker(marker.id, e.target.getLatLng());
+      },
+      click() {
+        handleDeleteMarker(marker.id);
+      },
+    }}
+  />
+))}
+  <MapClickHandler handleAddMarker={handleAddMarker} />
 </MapContainer>
   );
 }
