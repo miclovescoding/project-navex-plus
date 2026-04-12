@@ -9,6 +9,7 @@ CORS(app)
 
 # tool that converts gps latlong to RSO kertau
 transformer = Transformer.from_crs(4326, 3168)
+reverse_transformer = Transformer.from_crs(3168, 4326)
 
 # health check endpoint
 @app.route("/")
@@ -28,6 +29,15 @@ def convert():
         mgr_y = int(str(int(y))[1:5])
         results.append({"x": mgr_x, "y": mgr_y})
     return results
+
+# reverse function of the one above it, used when MGR is the input to convert to latlngs on map
+@app.route("/reverse", methods=["POST"])
+def reverse():
+    data = request.get_json()
+    easting = data["easting"]
+    northing = data["northing"]
+    lat, lng = reverse_transformer.transform(easting, northing)
+    return {"lat": lat, "lng": lng}
 
 if __name__ == "__main__":
     app.run(debug=True)

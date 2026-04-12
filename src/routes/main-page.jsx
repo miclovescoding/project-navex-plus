@@ -76,7 +76,7 @@ export default function MainPage() {
   return (
     <div>
       
-        // Dropdown menu for training areas
+        {/* Dropdown menu for training areas */}
         <TrainingAreaDropdown trainingAreas={TRAINING_AREAS} onSelectArea={handleSelectArea} /> 
         <NavexMap
           defaultLocation={mapLocation}
@@ -91,7 +91,7 @@ export default function MainPage() {
           handleDeleteAllMarkers={handleDeleteAllMarkers}
           handleChangeInterval={handleChangeInterval}
         />
-        // Only show NDS when at least 2 markers are placed
+        {/* Only show NDS when at least 2 markers are placed */}
         {markers.length > 1 && <NDS markers={markers} interval={interval} />}
       
     </div>
