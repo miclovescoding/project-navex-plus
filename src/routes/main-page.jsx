@@ -4,8 +4,9 @@ import MapControls from "../components/map-controls";
 import NavexMap from "../components/navex-map";
 import NDS from "../components/nds";
 import TrainingAreaDropdown from "../components/training-area-dropdown";
+import MarkerPanel from "../components/marker-panel";
 
-{/* Javascript object; like Python dict - can update new training areas in the future */}
+//Javascript object; like Python dict - can update new training areas in the future
 const TRAINING_AREAS = {
   amaKeng: {
     name: "Ama Keng",
@@ -38,54 +39,71 @@ const TRAINING_AREAS = {
 };
 
 export default function MainPage() {
-  {/* List of checkpoints user places on map, starts empty */}
+  //List of checkpoints user places on map, starts empty
   let [markers, setMarkers] = useState([]); 
-  {/* Dist interval between points default 100m */}
+  //Dist interval between points default 100m 
   let [interval, setInterval] = useState(100); 
   let [mapLocation, setMapLocation] = useState(TRAINING_AREAS.lorongAsrama.location);
+  let [selectedMarker, setSelectedMarker] = useState(null);
 
-  {/* 5 actions users can perform */}
-  {/* Add Marker */}
+  //5 actions users can perform 
+  //Add Marker 
   function handleAddMarker(position) {
-    setMarkers([...markers, { id: crypto.randomUUID(), position: position }]);
+    setMarkers([...markers, { id: crypto.randomUUID(), position: position, color: "red", name: "" }]);
   }
-  {/* Change Marker - drag and drop */}
+  //Change Marker - drag and drop 
   function handleChangeMarker(id, position) {
     setMarkers(
       markers.map(marker =>
-        marker.id === id ? { id: id, position: position } : marker,
+        marker.id === id ? { ...marker, position: position } : marker,
       ),
     );
   }
-  {/* Delete 1 Marker */}
+  //Delete 1 Marker 
   function handleDeleteMarker(id) {
     setMarkers(markers.filter(marker => marker.id !== id));
+    
   }
-  {/* Delete all markers */}
+  //Delete all markers
   function handleDeleteAllMarkers() {
     setMarkers([]);
   }
-  {/* Changes distance interval between 50 and 100 */}
+  //Changes distance interval between 50 and 100
   function handleChangeInterval(newInterval) {
     setInterval(newInterval);
   }
   function handleSelectArea(location) {
     setMapLocation(location);
   }
-
+  function handleUpdateMarker(id, color, name) {
+  setMarkers(markers.map(marker =>
+    marker.id === id ? { ...marker, color: color, name: name } : marker
+  ));
+}
+const activeMarker = markers.find(marker => marker.id === selectedMarker);
   return (
     <div>
       
         {/* Dropdown menu for training areas */}
         <TrainingAreaDropdown trainingAreas={TRAINING_AREAS} onSelectArea={handleSelectArea} /> 
-        <NavexMap
-          defaultLocation={mapLocation}
-          markers={markers}
-          handleAddMarker={handleAddMarker}
-          handleChangeMarker={handleChangeMarker}
-          handleDeleteMarker={handleDeleteMarker}
-          
-        />
+        <div style={{ position: "relative" }}>
+  <NavexMap
+    defaultLocation={mapLocation}
+    markers={markers}
+    handleAddMarker={handleAddMarker}
+    handleChangeMarker={handleChangeMarker}
+    handleDeleteMarker={handleDeleteMarker}
+    handleUpdateMarker={handleUpdateMarker}
+    setSelectedMarker={setSelectedMarker}
+  />
+
+  <MarkerPanel
+    marker={activeMarker}
+    onUpdate={handleUpdateMarker}
+    onDelete={handleDeleteMarker}
+    onClose={() => setSelectedMarker(null)}
+  />
+</div>
         <MapControls 
           handleAddMarker={handleAddMarker}
           handleDeleteAllMarkers={handleDeleteAllMarkers}

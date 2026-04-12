@@ -23,10 +23,10 @@ export default function Root() {
       </div>
       <footer className="bg-black pb-10 pt-6 text-center">
         <h2 className="m-4 text-xl font-bold">Dari Kiri, Cepat Jalan!</h2>
-        <p className="mb-2 text-center">From map to mission in seconds</p> 
+        {/* <p className="mb-2 text-center">ORD Lo.</p> */}
         <p className="text-xs">
           <a href="https://github.com/miclovescoding">Michael</a> |{" "} {/* developer links */}
-          <a href="https://github.com/wuihee">Wuihee</a> |{" "}
+          {/* <a href="https://github.com/wuihee">Wuihee</a> |{" "} */}
           <a href="mailto: navexplus@gmail.com">Contact</a> | <Link></Link>
           <Link to={"/donate"}>Support Us</Link>               
           {/* donate page link

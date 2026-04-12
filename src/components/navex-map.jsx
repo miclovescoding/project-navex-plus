@@ -1,8 +1,9 @@
 import "leaflet/dist/leaflet.css";
+import L from "leaflet";
 import { MapContainer, TileLayer, useMap, Marker, useMapEvents, LayersControl, Polyline } from "react-leaflet";
 import { useEffect } from "react";
 
-// Defines a geographic box ard sg, prevents panning map outside sg
+// Defines a geographic box ard sg, prevents panning map outside sg, currently not in use
 const SINGAPORE_BOUNDS = {
   north: 1.466878,
   south: 1.21186,
@@ -36,6 +37,8 @@ export default function NavexMap({
   handleAddMarker,
   handleChangeMarker,
   handleDeleteMarker,
+  handleUpdateMarker,
+  setSelectedMarker
 }) {
 
 const polylinePositions = markers.map(marker => [marker.position.lat, marker.position.lng]);
@@ -93,22 +96,43 @@ const polylinePositions = markers.map(marker => [marker.position.lat, marker.pos
 </LayersControl>
 
   <ChangeMapView location={defaultLocation} />
-  {markers.map(marker => (
+  {markers.map((marker) => (
   <Marker
     key={marker.id}
     position={marker.position}
     draggable={true}
+    icon={L.divIcon({
+  className: "",
+  html: `
+    <div style="display: flex; flex-direction: column; align-items: center;">
+      ${marker.name ? `<div style="
+        background: rgba(0,0,0,0.7);
+color: white;
+padding: 2px 6px;
+border-radius: 4px;
+font-size: 11px;
+white-space: nowrap;
+margin-bottom: 2px;
+font-family: monospace;
+      ">${marker.name}</div>` : ""}
+      <img src="https://maps.google.com/mapfiles/ms/icons/${marker.color}-dot.png" 
+           style="width: 32px; height: 32px;"/>
+    </div>
+  `,
+  iconSize: [32, marker.name ? 52 : 32],
+  iconAnchor: [16, marker.name ? 52 : 32],
+})}
     eventHandlers={{
       dragend(e) {
         handleChangeMarker(marker.id, e.target.getLatLng());
       },
       click() {
-        handleDeleteMarker(marker.id);
+        setSelectedMarker(marker.id);
       },
     }}
   />
 ))}
-
+  
 {polylinePositions.length > 1 && (
   <Polyline
     positions={polylinePositions}
