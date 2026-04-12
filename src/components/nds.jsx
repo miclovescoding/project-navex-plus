@@ -1,9 +1,6 @@
 import { useEffect, useState } from "react";
 
-// Disabled temporarily
-// const MAPTILER_API_KEY = import.meta.env.VITE_MAPTILER_API_KEY;
-const SOURCE_CRS = 4326; // WGS 84 - standard GPS coords
-const DESTINATION_CRS = 3168; // Kertau (RSO) / RSO Malaya - SAF coord system
+
 const FAILURE_MESSAGE = "Oops, something went wrong! Please make sure you have your API key set correctly.";
 
 export default function NDS({ markers, interval }) {

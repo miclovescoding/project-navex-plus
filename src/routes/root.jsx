@@ -8,19 +8,28 @@ export default function Root() {
         <h1 className="mb-4 text-center font-['Major_Mono_Display'] text-4xl text-[#6da48d]">
           <Link to={"/"}>Project Navex Plus</Link>
         </h1>
-        <p className="mb-5 text-center">Generate your NDS with a few clicks!</p>
-        <p className="mb-5 text-center">Dari Kiri, Cepat Jalan!</p>
+        <p className="text-center text-lg text-gray-300 tracking-wide">
+      Plan fast. Move faster.
+      </p>
+      {/* <p className="text-center text-sm text-gray-400">
+      Your NDS, minus the headache.
+      </p> */}
+      <p className="mb-5 text-center"></p>
+      <p className="mb-5 text-center">Generate your NDS with a few clicks!</p>
+        
 
 
         <Outlet /> {/* where child page is inserted */}
       </div>
       <footer className="bg-black pb-10 pt-6 text-center">
-        <h2 className="m-4 text-xl font-bold">ORD Lo.</h2>
+        <h2 className="m-4 text-xl font-bold">Dari Kiri, Cepat Jalan!</h2>
+        <p className="mb-2 text-center">From map to mission in seconds</p> 
         <p className="text-xs">
           <a href="https://github.com/miclovescoding">Michael</a> |{" "} {/* developer links */}
           <a href="https://github.com/wuihee">Wuihee</a> |{" "}
           <a href="mailto: navexplus@gmail.com">Contact</a> | <Link></Link>
-          <Link to={"/donate"}>Support Us</Link>                {/*donate page link
+          <Link to={"/donate"}>Support Us</Link>               
+          {/* donate page link
            To update footer in the future */}
         </p>
       </footer>
