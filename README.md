@@ -93,4 +93,10 @@ Navex+ aims to evolve into a collaborative navigation platform:
 - Crowdsourced path data from soldiers in the field
 - Continuous improvement of route planning insights
 
-The long-term vision is a data-driven navigation platform that improves with every route planned and executed.
+The long-term vision is a data-driven navigation platform that improves with every route planned and executed.  
+
+## Credits
+
+Built on top of [Project Navex](https://github.com/projectnavex/project-navex-2) by [Alex](https://github.com/Airiinnn) and [Wuihee](https://github.com/wuihee).
+
+Navex+ developed by [miclovescoding](https://github.com/miclovescoding) during National Service.
