@@ -12,45 +12,26 @@ export default function NDS({ markers, interval }) {
   let [statusMessage, setStatusMessage] = useState("");
 
   useEffect(() => {
-    const apiKey = sessionStorage.getItem("userApiKey"); // gets Maptiler API Key
-
-    if (!apiKey) {
-      setStatusMessage(FAILURE_MESSAGE);
-      return;
-    }
-
     if (markers.length < 2) {
       return;
     }
 
     setLoading(true);
-    let latLngs = markers
-      .reduce((accumulator, marker) => {
-        let { lat, lng } = marker.position;
-        return accumulator + `${lng},${lat};`;
-      }, "")
-      .slice(0, -1);
-    let url = `https://api.maptiler.com/coordinates/transform/${latLngs}.json` +
-      `?s_srs=${SOURCE_CRS}` +
-      `&t_srs=${DESTINATION_CRS}` +
-      `&key=${apiKey}`;
+    fetch("http://127.0.0.1:5000/convert", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(markers.map(marker => ({
+    lat: marker.position.lat,
+    lng: marker.position.lng
+  })))
+})
+  .then(response => response.json())
+  .then(mgrs => {
+    setStatusMessage("");
+    setLoading(false);
 
-    fetch(url) //calling external API - either find free API or do the math in Python
-      .then(response => response.json())
-      .then(responsePayload => {
-        setStatusMessage("");
-        setLoading(false);
-
-        const mgrs = responsePayload.results;
-
-        // Convert all MGRs to floating point numbers. - CORE ALGORITHM
-        for (let i = 0; i < mgrs.length; i++) {
-          let { x, y } = mgrs[i];
-          mgrs[i] = {
-            x: parseFloat(x.toString().slice(1, 5)),
-            y: parseFloat(y.toString().slice(1, 5)),
-          };
-        }
+    // mgrs already in correct format from Flask backend
+    // no conversion needed unlike MapTiler
 
         let data = [];
         for (let i = 1; i < mgrs.length; i++) {
@@ -105,7 +86,7 @@ export default function NDS({ markers, interval }) {
       >
         <thead className="bg-green">
           <tr>
-            // Said 5 columns
+            {/* Said 5 columns */}
             <TableCell>No.</TableCell>
             <TableCell>Start MGR</TableCell>
             <TableCell>End MGR</TableCell>
