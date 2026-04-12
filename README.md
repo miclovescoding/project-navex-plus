@@ -74,8 +74,13 @@ Navex+ aims to evolve into a collaborative navigation platform:
 
 The long-term vision is a data-driven navigation platform that improves with every route planned and executed.  
 
-## Credits
+## Acknowledgements
 
-Built on top of [Project Navex](https://github.com/projectnavex/project-navex-2) by [Alex](https://github.com/Airiinnn) and [Wuihee](https://github.com/wuihee).
+This project builds upon the open-source Project Navex:
+https://github.com/projectnavex/project-navex-2
 
-Navex+ developed by [Michael](https://github.com/miclovescoding) during National Service.
+Original authors:
+- Alex — https://github.com/Airiinnn
+- Wuihee — https://github.com/wuihee
+
+Navex+ significantly extends the original project with a new frontend, backend, geospatial pipeline, and planned AI-assisted features.
