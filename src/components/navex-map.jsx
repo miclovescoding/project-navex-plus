@@ -83,7 +83,7 @@ export default function NavexMap({
     />
   </LayersControl.BaseLayer>
 
-  <LayersControl.Overlay name="Satnav Labels">
+  <LayersControl.Overlay name="Satellite Labels">
   <TileLayer
     url="https://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}"
     attribution='&copy; Esri'
