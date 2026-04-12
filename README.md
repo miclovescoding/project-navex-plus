@@ -39,27 +39,6 @@ Navex+ is designed as a complete end-to-end system rather than a standalone tool
 
 The system captures, processes, and enhances navigation knowledge that was previously manual and fragmented.
 
-## Information Systems Design
-
-Navex+ is designed as a complete end-to-end system rather than a standalone tool.
-
-### Data Layer
-- Integration of multiple open geospatial map providers
-- Replacement of paid APIs with open-source data pipelines
-- Coordinate conversion backend using Python and pyproj
-
-### Application Layer
-- Interactive web interface for planning and visualisation
-- Real-time editing of checkpoints and routes
-- Automatic generation of navigation data (NDS)
-
-### Decision Support Layer
-- Future AI features designed to assist human planners
-- Route comparison and terrain difficulty insights
-- Natural-language navigation briefings
-
-The system captures, processes, and enhances navigation knowledge that was previously manual and fragmented.
-
 ## AI-Assisted Decision Support
 
 Navex+ explores how AI can support human decision-making in operational planning.
