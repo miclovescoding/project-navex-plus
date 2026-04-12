@@ -1,5 +1,5 @@
 import "leaflet/dist/leaflet.css";
-import { MapContainer, TileLayer, useMap, Marker, useMapEvents, LayersControl } from "react-leaflet";
+import { MapContainer, TileLayer, useMap, Marker, useMapEvents, LayersControl, Polyline } from "react-leaflet";
 import { useEffect } from "react";
 
 // Defines a geographic box ard sg, prevents panning map outside sg
@@ -38,6 +38,7 @@ export default function NavexMap({
   handleDeleteMarker,
 }) {
 
+const polylinePositions = markers.map(marker => [marker.position.lat, marker.position.lng]);
 
   // Clicking anywhere on the map adds marker with clicked coords
   return (
@@ -107,6 +108,19 @@ export default function NavexMap({
     }}
   />
 ))}
+
+{polylinePositions.length > 1 && (
+  <Polyline
+    positions={polylinePositions}
+    pathOptions={{
+      color: "black",
+      weight: 2.3,
+      dashArray: "5,10",
+      lineCap: "round"
+    }}
+  />
+)}
+
   <MapClickHandler handleAddMarker={handleAddMarker} />
 </MapContainer>
   );
