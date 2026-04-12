@@ -107,13 +107,13 @@ const polylinePositions = markers.map(marker => [marker.position.lat, marker.pos
     <div style="display: flex; flex-direction: column; align-items: center;">
       ${marker.name ? `<div style="
         background: rgba(0,0,0,0.7);
-color: white;
-padding: 2px 6px;
-border-radius: 4px;
-font-size: 11px;
-white-space: nowrap;
-margin-bottom: 2px;
-font-family: monospace;
+        color: white;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 11px;
+        white-space: nowrap;
+        margin-bottom: 2px;
+        font-family: monospace;
       ">${marker.name}</div>` : ""}
       <img src="https://maps.google.com/mapfiles/ms/icons/${marker.color}-dot.png" 
            style="width: 32px; height: 32px;"/>
