@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 import MapControls from "../components/map-controls";
 import NavexMap from "../components/navex-map";
@@ -45,29 +45,53 @@ export default function MainPage() {
   let [interval, setInterval] = useState(100); 
   let [mapLocation, setMapLocation] = useState(TRAINING_AREAS.lorongAsrama.location);
   let [selectedMarker, setSelectedMarker] = useState(null);
-
+  let [route, setRoute] = useState([]);
+  let [dots, setDots] = useState([]);
   //5 actions users can perform 
+
+  const fetchRouteTimeout = useRef(null);
+
+function debouncedFetchRoute(currentMarkers) {
+  if (fetchRouteTimeout.current) {
+    clearTimeout(fetchRouteTimeout.current);
+  }
+  fetchRouteTimeout.current = setTimeout(() => {
+    fetchRoute(currentMarkers);
+  }, 300);
+}
   //Add Marker 
   function handleAddMarker(position) {
-    setMarkers([...markers, { id: crypto.randomUUID(), position: position, color: "red", name: "" }]);
-  }
+  const newMarkers = [...markers, { id: crypto.randomUUID(), position: position, color: "red", name: "" }];
+  setMarkers(newMarkers);
+  // immediately show straight line
+  //setRoute(newMarkers.map(m => ({ lat: m.position.lat, lng: m.position.lng })));
+  // then fetch real route
+  debouncedFetchRoute(newMarkers);
+}
+  
   //Change Marker - drag and drop 
   function handleChangeMarker(id, position) {
-    setMarkers(
-      markers.map(marker =>
-        marker.id === id ? { ...marker, position: position } : marker,
-      ),
-    );
-  }
+  const newMarkers = markers.map(marker =>
+    marker.id === id ? { ...marker, position: position } : marker
+  );
+  setMarkers(newMarkers);
+  debouncedFetchRoute(newMarkers);
+}
+  
   //Delete 1 Marker 
   function handleDeleteMarker(id) {
-    setMarkers(markers.filter(marker => marker.id !== id));
-    
-  }
+  const newMarkers = markers.filter(marker => marker.id !== id);
+  setMarkers(newMarkers);
+  debouncedFetchRoute(newMarkers);
+}
+
   //Delete all markers
-  function handleDeleteAllMarkers() {
-    setMarkers([]);
-  }
+function handleDeleteAllMarkers() {
+  setMarkers([]);
+  setRoute([]);
+  setDots([]);
+}
+
   //Changes distance interval between 50 and 100
   function handleChangeInterval(newInterval) {
     setInterval(newInterval);
@@ -80,8 +104,35 @@ export default function MainPage() {
     marker.id === id ? { ...marker, color: color, name: name } : marker
   ));
 }
+
+function fetchRoute(currentMarkers) {
+  if (currentMarkers.length < 2) {
+    setRoute([]);
+    setDots([]);
+    return;
+  }
+
+  fetch("http://127.0.0.1:5000/route", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      markers: currentMarkers.map(marker => ({
+        lat: marker.position.lat,
+        lng: marker.position.lng
+      })),
+      interval: interval
+    })
+  })
+    .then(response => response.json())
+    .then(data => {
+      setRoute(data.route);
+      setDots(data.dots);
+    })
+    .catch(error => console.error(error));
+}
+
 const activeMarker = markers.find(marker => marker.id === selectedMarker);
-  return (
+  return (  
     <div>
       
         {/* Dropdown menu for training areas */}
@@ -90,6 +141,8 @@ const activeMarker = markers.find(marker => marker.id === selectedMarker);
   <NavexMap
     defaultLocation={mapLocation}
     markers={markers}
+    route={route}
+    dots={dots}
     handleAddMarker={handleAddMarker}
     handleChangeMarker={handleChangeMarker}
     handleDeleteMarker={handleDeleteMarker}

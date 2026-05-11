@@ -1,6 +1,6 @@
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
-import { MapContainer, TileLayer, useMap, Marker, useMapEvents, LayersControl, Polyline } from "react-leaflet";
+import { MapContainer, TileLayer, useMap, Marker, useMapEvents, LayersControl, Polyline, CircleMarker } from "react-leaflet";
 import { useEffect } from "react";
 
 // Defines a geographic box ard sg, prevents panning map outside sg, currently not in use
@@ -34,6 +34,8 @@ function MapClickHandler({ handleAddMarker }) {
 export default function NavexMap({
   defaultLocation,
   markers,
+  route,
+  dots,
   handleAddMarker,
   handleChangeMarker,
   handleDeleteMarker,
@@ -41,7 +43,6 @@ export default function NavexMap({
   setSelectedMarker
 }) {
 
-const polylinePositions = markers.map(marker => [marker.position.lat, marker.position.lng]);
 
   // Clicking anywhere on the map adds marker with clicked coords
   return (
@@ -50,6 +51,7 @@ const polylinePositions = markers.map(marker => [marker.position.lat, marker.pos
   zoom={defaultLocation.zoom}
   scrollWheelZoom={true}
   className="my-5 h-[450px] w-full md:h-[75vh]"
+
 >
   <LayersControl position="topright">
   <LayersControl.BaseLayer checked name="Topo">
@@ -133,19 +135,36 @@ const polylinePositions = markers.map(marker => [marker.position.lat, marker.pos
   />
 ))}
   
-{polylinePositions.length > 1 && (
-  <Polyline
-    positions={polylinePositions}
-    pathOptions={{
-      color: "black",
-      weight: 2.3,
-      dashArray: "5,10",
-      lineCap: "round"
-    }}
-  />
-)}
+
+
+  {route.length > 1 && (
+    <Polyline
+      positions={route.map(point => [point.lat, point.lng])}
+      pathOptions={{
+        color: "black",
+        weight: 2.3,
+        dashArray: "5,10",
+        lineCap: "round"
+      }}
+    />
+  )}
+
+   {dots.map((dot, index) => (
+        <CircleMarker
+          key={index}
+          center={[dot.lat, dot.lng]}
+          radius={3}
+          pathOptions={{
+            color: "#4285F4",
+            fillColor: "#4285F4",
+            fillOpacity: 1,
+            weight: 1
+          }}
+        />
+      ))}
 
   <MapClickHandler handleAddMarker={handleAddMarker} />
 </MapContainer>
+
   );
 }
