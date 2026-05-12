@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 
 import MapControls from "../components/map-controls";
 import NavexMap from "../components/navex-map";
@@ -47,9 +47,21 @@ export default function MainPage() {
   let [selectedMarker, setSelectedMarker] = useState(null);
   let [route, setRoute] = useState([]);
   let [dots, setDots] = useState([]);
+  let [nds, setNds] = useState([]);
+  let [ndsLoading, setNdsLoading] = useState(false)
   //5 actions users can perform 
 
   const fetchRouteTimeout = useRef(null);
+  const markersRef = useRef(markers);
+useEffect(() => {
+  markersRef.current = markers;
+}, [markers]);
+
+  useEffect(() => {
+  if (markersRef.current.length >= 2) {
+    debouncedFetchRoute(markersRef.current);
+  }
+}, [interval]);
 
 function debouncedFetchRoute(currentMarkers) {
   if (fetchRouteTimeout.current) {
@@ -63,9 +75,6 @@ function debouncedFetchRoute(currentMarkers) {
   function handleAddMarker(position) {
   const newMarkers = [...markers, { id: crypto.randomUUID(), position: position, color: "red", name: "" }];
   setMarkers(newMarkers);
-  // immediately show straight line
-  //setRoute(newMarkers.map(m => ({ lat: m.position.lat, lng: m.position.lng })));
-  // then fetch real route
   debouncedFetchRoute(newMarkers);
 }
   
@@ -90,12 +99,14 @@ function handleDeleteAllMarkers() {
   setMarkers([]);
   setRoute([]);
   setDots([]);
+  setNds([]);
 }
 
   //Changes distance interval between 50 and 100
   function handleChangeInterval(newInterval) {
     setInterval(newInterval);
   }
+
   function handleSelectArea(location) {
     setMapLocation(location);
   }
@@ -112,6 +123,8 @@ function fetchRoute(currentMarkers) {
     return;
   }
 
+  setNdsLoading(true);
+
   fetch("http://127.0.0.1:5000/route", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -127,8 +140,13 @@ function fetchRoute(currentMarkers) {
     .then(data => {
       setRoute(data.route);
       setDots(data.dots);
+      setNds(data.nds);
+      setNdsLoading(false);
     })
-    .catch(error => console.error(error));
+    .catch(error => {
+      console.error(error);
+      setNdsLoading(false);
+    });
 }
 
 const activeMarker = markers.find(marker => marker.id === selectedMarker);
@@ -163,7 +181,7 @@ const activeMarker = markers.find(marker => marker.id === selectedMarker);
           handleChangeInterval={handleChangeInterval}
         />
         {/* Only show NDS when at least 2 markers are placed */}
-        {markers.length > 1 && <NDS markers={markers} interval={interval} />}
+        {nds.length > 0 && <NDS nds={nds} loading={ndsLoading} />}
       
     </div>
   );
