@@ -24,7 +24,7 @@ export default function MapControls({
   let easting = parseInt(`6${mgr.slice(0, 4)}0`);
   let northing = parseInt(`1${mgr.slice(4, 8)}0`);
 
-  fetch("${import.meta.env.VITE_BACKEND_URL}/reverse", {
+  fetch(`${import.meta.env.VITE_BACKEND_URL}/reverse`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ easting, northing })
