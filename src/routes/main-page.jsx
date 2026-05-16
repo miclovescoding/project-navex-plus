@@ -125,7 +125,7 @@ function fetchRoute(currentMarkers) {
 
   setNdsLoading(true);
 
-  fetch("http://127.0.0.1:5000/route", {
+  fetch("${import.meta.env.VITE_BACKEND_URL}/route", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
